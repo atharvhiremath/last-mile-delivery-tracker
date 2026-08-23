@@ -55,7 +55,7 @@ export default function Footer() {
         </div>
 
         <div className="mt-8 pt-6 border-t border-slate-800 text-center text-xs text-slate-500">
-          © {new Date().getFullYear()} Last-Mile Delivery Tracker. Production assignment submission.
+          © {new Date().getFullYear()} Last-Mile Delivery Tracker. All rights reserved. Enterprise Logistics Platform.
         </div>
       </div>
     </footer>

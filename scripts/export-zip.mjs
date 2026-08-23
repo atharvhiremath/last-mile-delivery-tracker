@@ -1,8 +1,8 @@
 import { execSync } from "child_process";
 
-console.log("📦 Creating clean project submission archive via Git archive...");
+console.log("📦 Creating clean project release archive via Git archive...");
 
-const archiveName = "last-mile-delivery-tracker-submission.zip";
+const archiveName = "last-mile-delivery-tracker-release.zip";
 
 try {
   execSync(`git archive -o ${archiveName} HEAD`, { stdio: "inherit" });

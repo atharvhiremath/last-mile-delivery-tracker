@@ -305,4 +305,4 @@ Run `npx prisma db push` and `npm run db:seed`.
 ---
 
 ## 📄 License
-MIT License. Built for Last-Mile Logistics Delivery Assessment.
+MIT License. Enterprise Last-Mile Logistics & Dispatch Platform.
