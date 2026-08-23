@@ -6,10 +6,24 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { UserPlus, AlertCircle, Truck, Package, Shield, Eye, EyeOff } from "lucide-react";
 
+const COUNTRY_CODES = [
+  { code: "+91", label: "🇮🇳 +91 (IN)" },
+  { code: "+1", label: "🇺🇸 +1 (US/CA)" },
+  { code: "+44", label: "🇬🇧 +44 (UK)" },
+  { code: "+61", label: "🇦🇺 +61 (AU)" },
+  { code: "+971", label: "🇦🇪 +971 (UAE)" },
+  { code: "+65", label: "🇸🇬 +65 (SG)" },
+  { code: "+49", label: "🇩🇪 +49 (DE)" },
+  { code: "+33", label: "🇫🇷 +33 (FR)" },
+  { code: "+81", label: "🇯🇵 +81 (JP)" },
+  { code: "+86", label: "🇨🇳 +86 (CN)" },
+];
+
 export default function RegisterPage() {
   const [role, setRole] = useState<"CUSTOMER" | "AGENT" | "ADMIN">("CUSTOMER");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [countryCode, setCountryCode] = useState("+91");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -29,6 +43,11 @@ export default function RegisterPage() {
     e.preventDefault();
     setError(null);
 
+    if (!phone.trim()) {
+      setError("Please enter a valid phone number.");
+      return;
+    }
+
     if (password.length < 6) {
       setError("Password must be at least 6 characters long.");
       return;
@@ -41,6 +60,8 @@ export default function RegisterPage() {
 
     setLoading(true);
 
+    const fullPhone = `${countryCode} ${phone.trim()}`;
+
     try {
       const res = await fetch("/api/auth/register", {
         method: "POST",
@@ -48,7 +69,7 @@ export default function RegisterPage() {
         body: JSON.stringify({
           name,
           email,
-          phone,
+          phone: fullPhone,
           password,
           role,
           companyName: role === "CUSTOMER" ? companyName : undefined,
@@ -150,16 +171,31 @@ export default function RegisterPage() {
                 className="w-full px-4 py-2.5 text-xs border border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-white rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none"
               />
             </div>
+
+            {/* Country Code & Phone Number Field */}
             <div>
               <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Phone Number</label>
-              <input
-                type="tel"
-                required
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder="+91 98110 00000"
-                className="w-full px-4 py-2.5 text-xs border border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-white rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none"
-              />
+              <div className="flex gap-2">
+                <select
+                  value={countryCode}
+                  onChange={(e) => setCountryCode(e.target.value)}
+                  className="w-32 px-2 py-2.5 text-xs border border-slate-300 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-800 dark:text-white font-semibold focus:ring-2 focus:ring-indigo-500 focus:outline-none flex-shrink-0"
+                >
+                  {COUNTRY_CODES.map((c) => (
+                    <option key={c.code} value={c.code}>
+                      {c.label}
+                    </option>
+                  ))}
+                </select>
+                <input
+                  type="tel"
+                  required
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder="98110 00000"
+                  className="w-full px-3.5 py-2.5 text-xs border border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-white rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none font-mono"
+                />
+              </div>
             </div>
           </div>
 
