@@ -9,10 +9,16 @@ const globalForPrisma = globalThis as unknown as {
 // If running in Vercel serverless environment and using SQLite, ensure /tmp/dev.db has write access
 if (process.env.VERCEL) {
   try {
-    const srcDb = path.join(process.cwd(), "dev.db");
+    const rootDb = path.join(process.cwd(), "dev.db");
+    const prismaDb = path.join(process.cwd(), "prisma", "dev.db");
     const tmpDb = "/tmp/dev.db";
-    if (fs.existsSync(srcDb) && !fs.existsSync(tmpDb)) {
-      fs.copyFileSync(srcDb, tmpDb);
+
+    if (!fs.existsSync(tmpDb)) {
+      if (fs.existsSync(prismaDb)) {
+        fs.copyFileSync(prismaDb, tmpDb);
+      } else if (fs.existsSync(rootDb)) {
+        fs.copyFileSync(rootDb, tmpDb);
+      }
     }
     process.env.DATABASE_URL = "file:/tmp/dev.db";
   } catch (e) {
