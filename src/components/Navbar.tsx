@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
+import { useTheme } from "@/context/ThemeContext";
 import {
   Truck,
   Package,
@@ -17,10 +18,13 @@ import {
   Compass,
   Layers,
   Users,
+  Sun,
+  Moon,
 } from "lucide-react";
 
 export default function Navbar() {
   const { user, logout, login } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [demoSwitching, setDemoSwitching] = useState(false);
@@ -29,7 +33,6 @@ export default function Navbar() {
   const quickSwitch = async (email: string, password: string = "password123") => {
     setDemoSwitching(true);
     try {
-      // Use standard default passwords for seed users
       let pass = password;
       if (email.startsWith("admin")) pass = "admin123";
       if (email.startsWith("agent")) pass = "agent123";
@@ -54,7 +57,7 @@ export default function Navbar() {
   const isActive = (path: string) => pathname === path || pathname?.startsWith(path + "/");
 
   return (
-    <header className="sticky top-0 z-50 bg-slate-900 text-white shadow-md border-b border-slate-800">
+    <header className="sticky top-0 z-50 bg-slate-900/95 dark:bg-slate-950/95 backdrop-blur text-white shadow-md border-b border-slate-800 transition-colors">
       {/* Top Demo Bar */}
       <div className="bg-slate-950 px-4 py-1.5 text-xs flex flex-wrap items-center justify-between border-b border-slate-800 text-slate-400">
         <div className="flex items-center gap-2">
@@ -62,29 +65,32 @@ export default function Navbar() {
           <span className="font-semibold text-slate-300">Live Logistics Platform</span>
           <span className="hidden md:inline text-slate-500">| Auto-calculated Rates • Nearest Agent Assignment • Live Tracking</span>
         </div>
-        <div className="flex items-center gap-2">
-          <span className="text-slate-400">⚡ 1-Click Demo Login:</span>
-          <button
-            onClick={() => quickSwitch("admin@deliverytracker.com")}
-            disabled={demoSwitching}
-            className="px-2 py-0.5 rounded bg-indigo-900/60 hover:bg-indigo-700 text-indigo-200 text-xs font-medium transition"
-          >
-            Admin
-          </button>
-          <button
-            onClick={() => quickSwitch("customer@gmail.com")}
-            disabled={demoSwitching}
-            className="px-2 py-0.5 rounded bg-blue-900/60 hover:bg-blue-700 text-blue-200 text-xs font-medium transition"
-          >
-            Customer (B2C)
-          </button>
-          <button
-            onClick={() => quickSwitch("agent.rajesh@deliverytracker.com")}
-            disabled={demoSwitching}
-            className="px-2 py-0.5 rounded bg-amber-900/60 hover:bg-amber-700 text-amber-200 text-xs font-medium transition"
-          >
-            Agent
-          </button>
+        <div className="flex items-center gap-3">
+          {/* Quick Demo Switcher */}
+          <div className="flex items-center gap-1.5">
+            <span className="text-slate-400 hidden sm:inline">⚡ Quick Switch:</span>
+            <button
+              onClick={() => quickSwitch("admin@deliverytracker.com")}
+              disabled={demoSwitching}
+              className="px-2 py-0.5 rounded bg-indigo-900/60 hover:bg-indigo-700 text-indigo-200 text-xs font-medium transition"
+            >
+              Admin
+            </button>
+            <button
+              onClick={() => quickSwitch("customer@gmail.com")}
+              disabled={demoSwitching}
+              className="px-2 py-0.5 rounded bg-blue-900/60 hover:bg-blue-700 text-blue-200 text-xs font-medium transition"
+            >
+              Customer
+            </button>
+            <button
+              onClick={() => quickSwitch("agent.rajesh@deliverytracker.com")}
+              disabled={demoSwitching}
+              className="px-2 py-0.5 rounded bg-amber-900/60 hover:bg-amber-700 text-amber-200 text-xs font-medium transition"
+            >
+              Agent
+            </button>
+          </div>
         </div>
       </div>
 
@@ -191,8 +197,22 @@ export default function Navbar() {
             )}
           </nav>
 
-          {/* Right Action / Auth profile */}
+          {/* Right Action / Auth profile & Theme Toggle */}
           <div className="hidden md:flex items-center gap-3">
+            {/* Sun / Moon Theme Toggle */}
+            <button
+              onClick={toggleTheme}
+              title={theme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"}
+              className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-amber-400 transition border border-slate-700 focus:outline-none flex items-center justify-center"
+              aria-label="Toggle Dark Mode"
+            >
+              {theme === "dark" ? (
+                <Sun className="w-4 h-4 text-amber-400 transition-transform duration-300 hover:rotate-45" />
+              ) : (
+                <Moon className="w-4 h-4 text-indigo-300 transition-transform duration-300 hover:-rotate-12" />
+              )}
+            </button>
+
             {user ? (
               <div className="flex items-center gap-3">
                 <div className="text-right">
@@ -230,8 +250,19 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* Mobile menu button */}
-          <div className="flex md:hidden">
+          {/* Mobile Actions: Theme toggle & Menu button */}
+          <div className="flex md:hidden items-center gap-2">
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-lg bg-slate-800 text-slate-300 hover:text-amber-400 border border-slate-700"
+              aria-label="Toggle Dark Mode"
+            >
+              {theme === "dark" ? (
+                <Sun className="w-4 h-4 text-amber-400" />
+              ) : (
+                <Moon className="w-4 h-4 text-indigo-300" />
+              )}
+            </button>
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800"
