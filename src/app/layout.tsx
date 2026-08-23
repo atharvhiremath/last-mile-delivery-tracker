@@ -12,6 +12,11 @@ export const metadata: Metadata = {
   title: "Last-Mile Delivery Tracker | Smart Logistics & Dispatch Platform",
   description:
     "Intelligent Last-Mile Logistics Management Platform with dynamic rate calculation, volumetric billing, smart dispatch, and immutable tracking history.",
+  icons: {
+    icon: "/icon.svg",
+    shortcut: "/icon.svg",
+    apple: "/icon.svg",
+  },
 };
 
 export default function RootLayout({
