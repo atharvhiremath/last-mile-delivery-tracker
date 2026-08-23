@@ -6,7 +6,13 @@ const prisma = new PrismaClient();
 async function main() {
   console.log("🌱 Starting Last-Mile Delivery Tracker database seed...");
 
-  // Clear existing records
+  const userCount = await prisma.user.count().catch(() => 0);
+  if (userCount > 0) {
+    console.log(`Database already contains ${userCount} registered users. Preserving all records and skipping re-seed.`);
+    return;
+  }
+
+  // Clear existing records for initial clean seed
   await prisma.notificationLog.deleteMany();
   await prisma.orderStatusHistory.deleteMany();
   await prisma.order.deleteMany();
@@ -16,7 +22,7 @@ async function main() {
   await prisma.zone.deleteMany();
   await prisma.user.deleteMany();
 
-  console.log("Cleared existing database records.");
+  console.log("Cleared existing database records for initial seed.");
 
   // 1. Create Zones
   const zoneNorth = await prisma.zone.create({
