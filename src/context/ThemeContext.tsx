@@ -17,22 +17,14 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    // Check localStorage or system preference
+    // Default to light mode unless the user explicitly chose dark
     const storedTheme = localStorage.getItem("theme") as Theme | null;
-    if (storedTheme === "dark" || storedTheme === "light") {
-      setThemeState(storedTheme);
-      if (storedTheme === "dark") {
-        document.documentElement.classList.add("dark");
-      } else {
-        document.documentElement.classList.remove("dark");
-      }
+    if (storedTheme === "dark") {
+      setThemeState("dark");
+      document.documentElement.classList.add("dark");
     } else {
-      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-      const initialTheme = prefersDark ? "dark" : "light";
-      setThemeState(initialTheme);
-      if (prefersDark) {
-        document.documentElement.classList.add("dark");
-      }
+      setThemeState("light");
+      document.documentElement.classList.remove("dark");
     }
     setMounted(true);
   }, []);
@@ -48,7 +40,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   };
 
   const toggleTheme = () => {
-    setTheme(theme === "light" ? "dark" : "light");
+    const nextTheme = theme === "light" ? "dark" : "light";
+    setTheme(nextTheme);
   };
 
   return (

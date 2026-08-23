@@ -101,6 +101,7 @@ export default function AgentDashboard() {
         }),
       });
       await refreshUser();
+      alert("GPS Coordinates updated successfully!");
     } catch (e) {
       console.error(e);
     } finally {
@@ -108,31 +109,36 @@ export default function AgentDashboard() {
     }
   };
 
-  // Update order status transition
-  const handleUpdateStatus = async (orderId: string, nextStatus: string, notes?: string, failedReasonVal?: string) => {
+  // Transition Order Status
+  const handleUpdateStatus = async (
+    orderId: string,
+    targetStatus: string,
+    notes?: string,
+    failedReasonText?: string
+  ) => {
     setStatusUpdating(orderId);
     try {
       const res = await fetch(`/api/orders/${orderId}/status`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          status: nextStatus,
-          notes: notes || `Agent updated status to ${nextStatus}`,
-          failedReason: failedReasonVal,
+          status: targetStatus,
+          notes,
+          failedReason: failedReasonText,
           latitude: currentLat,
           longitude: currentLng,
         }),
       });
 
-      if (res.ok) {
-        await fetchAssignedOrders();
-        await refreshUser();
-      } else {
-        const errData = await res.json();
-        alert(errData.error || "Failed to update status.");
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to update status.");
       }
-    } catch (e) {
-      console.error(e);
+
+      await fetchAssignedOrders();
+      await refreshUser();
+    } catch (err: any) {
+      alert(err.message || "Failed to update order status.");
     } finally {
       setStatusUpdating(null);
     }
@@ -245,25 +251,25 @@ export default function AgentDashboard() {
       {/* Active Tasks Feed */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-black text-slate-900 flex items-center gap-2">
-            <Package className="w-5 h-5 text-indigo-600" />
+          <h2 className="text-lg font-black text-slate-900 dark:text-white flex items-center gap-2">
+            <Package className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
             <span>Active Deliveries ({activeOrders.length})</span>
           </h2>
           <button
             onClick={fetchAssignedOrders}
-            className="text-xs font-semibold text-indigo-600 hover:text-indigo-700"
+            className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300"
           >
             ↻ Refresh Tasks
           </button>
         </div>
 
         {loading ? (
-          <div className="py-12 text-center text-xs text-slate-500">Loading delivery tasks...</div>
+          <div className="py-12 text-center text-xs text-slate-500 dark:text-slate-400">Loading delivery tasks...</div>
         ) : activeOrders.length === 0 ? (
-          <div className="bg-white p-8 rounded-3xl border border-slate-200 text-center space-y-2">
+          <div className="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-200 dark:border-slate-800 text-center space-y-2 transition-colors">
             <CheckCircle2 className="w-10 h-10 text-emerald-500 mx-auto" />
-            <div className="font-bold text-slate-900 text-base">All Caught Up!</div>
-            <p className="text-xs text-slate-500 max-w-sm mx-auto">
+            <div className="font-bold text-slate-900 dark:text-white text-base">All Caught Up!</div>
+            <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto">
               You currently have no active deliveries assigned. New orders from your operating zone will appear here automatically.
             </p>
           </div>
@@ -275,48 +281,48 @@ export default function AgentDashboard() {
               return (
                 <div
                   key={order.id}
-                  className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-5 hover:border-indigo-200 transition"
+                  className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-5 hover:border-indigo-300 dark:hover:border-indigo-600 transition"
                 >
                   {/* Card Header */}
-                  <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                  <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
                     <div>
-                      <span className="font-mono font-bold text-sm text-slate-900">#{order.trackingNumber}</span>
-                      <div className="text-[11px] text-slate-500">{order.orderType} • {order.paymentType}</div>
+                      <span className="font-mono font-bold text-sm text-slate-900 dark:text-white">#{order.trackingNumber}</span>
+                      <div className="text-[11px] text-slate-500 dark:text-slate-400">{order.orderType} • {order.paymentType}</div>
                     </div>
-                    <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800 border border-amber-300">
+                    <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-800">
                       {order.status.replace(/_/g, " ")}
                     </span>
                   </div>
 
                   {/* Route Addresses */}
                   <div className="space-y-2 text-xs">
-                    <div className="flex items-start gap-2 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
-                      <MapPin className="w-4 h-4 text-indigo-600 mt-0.5 flex-shrink-0" />
+                    <div className="flex items-start gap-2 bg-slate-50 dark:bg-slate-800/70 p-3 rounded-2xl border border-slate-100 dark:border-slate-700/80">
+                      <MapPin className="w-4 h-4 text-indigo-600 dark:text-indigo-400 mt-0.5 flex-shrink-0" />
                       <div>
-                        <div className="text-[10px] font-bold uppercase text-indigo-700">Pickup: {order.senderName} ({order.senderPhone})</div>
-                        <div className="text-slate-800">{order.pickupAddress}, {order.pickupCity} ({order.pickupPincode})</div>
+                        <div className="text-[10px] font-bold uppercase text-indigo-700 dark:text-indigo-300">Pickup: {order.senderName} ({order.senderPhone})</div>
+                        <div className="text-slate-800 dark:text-slate-200">{order.pickupAddress}, {order.pickupCity} ({order.pickupPincode})</div>
                       </div>
                     </div>
 
-                    <div className="flex items-start gap-2 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
-                      <Navigation className="w-4 h-4 text-emerald-600 mt-0.5 flex-shrink-0" />
+                    <div className="flex items-start gap-2 bg-slate-50 dark:bg-slate-800/70 p-3 rounded-2xl border border-slate-100 dark:border-slate-700/80">
+                      <Navigation className="w-4 h-4 text-emerald-600 dark:text-emerald-400 mt-0.5 flex-shrink-0" />
                       <div>
-                        <div className="text-[10px] font-bold uppercase text-emerald-700">Drop: {order.recipientName} ({order.recipientPhone})</div>
-                        <div className="text-slate-800">{order.dropAddress}, {order.dropCity} ({order.dropPincode})</div>
+                        <div className="text-[10px] font-bold uppercase text-emerald-700 dark:text-emerald-300">Drop: {order.recipientName} ({order.recipientPhone})</div>
+                        <div className="text-slate-800 dark:text-slate-200">{order.dropAddress}, {order.dropCity} ({order.dropPincode})</div>
                       </div>
                     </div>
                   </div>
 
                   {/* Package & Payment */}
-                  <div className="flex justify-between items-center bg-slate-100/70 p-2.5 rounded-xl text-xs">
-                    <span className="text-slate-600 truncate max-w-[200px]">{order.itemDescription} ({order.billableWeightKg} kg)</span>
-                    <span className="font-bold text-slate-900 font-mono">
+                  <div className="flex justify-between items-center bg-slate-100/70 dark:bg-slate-800/80 p-3 rounded-2xl text-xs border border-slate-200/50 dark:border-slate-700/50">
+                    <span className="text-slate-600 dark:text-slate-300 truncate max-w-[200px]">{order.itemDescription} ({order.billableWeightKg} kg)</span>
+                    <span className="font-bold text-slate-900 dark:text-white font-mono">
                       {order.paymentType === "COD" ? `Collect COD: $${order.totalAmount}` : `Prepaid`}
                     </span>
                   </div>
 
                   {/* Action Transition Buttons */}
-                  <div className="space-y-2 pt-2 border-t border-slate-100">
+                  <div className="space-y-2 pt-2 border-t border-slate-100 dark:border-slate-800">
                     {order.status === "ASSIGNED" && (
                       <button
                         onClick={() => handleUpdateStatus(order.id, "PICKED_UP", "Package collected from sender.")}
@@ -374,7 +380,7 @@ export default function AgentDashboard() {
                     <div className="text-center">
                       <Link
                         href={`/track/${order.trackingNumber}`}
-                        className="text-[11px] text-slate-500 hover:text-indigo-600 font-medium inline-flex items-center gap-1"
+                        className="text-[11px] text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 font-medium inline-flex items-center gap-1"
                       >
                         <span>View Live Map & Full Timeline</span>
                         <ExternalLink className="w-3 h-3" />
@@ -390,30 +396,30 @@ export default function AgentDashboard() {
 
       {/* Completed Orders History */}
       {completedOrders.length > 0 && (
-        <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
-          <h2 className="text-sm font-bold uppercase tracking-wider text-slate-500">
+        <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4 transition-colors">
+          <h2 className="text-sm font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
             Recent Completed / Attempted Deliveries
           </h2>
-          <div className="divide-y divide-slate-100 text-xs">
+          <div className="divide-y divide-slate-100 dark:divide-slate-800 text-xs">
             {completedOrders.map((order) => (
               <div key={order.id} className="py-3 flex items-center justify-between">
                 <div>
-                  <span className="font-mono font-bold text-slate-900">#{order.trackingNumber}</span>
-                  <span className="text-slate-500 ml-2">{order.dropAddress}</span>
+                  <span className="font-mono font-bold text-slate-900 dark:text-white">#{order.trackingNumber}</span>
+                  <span className="text-slate-500 dark:text-slate-400 ml-2">{order.dropAddress}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <span
                     className={`px-2 py-0.5 rounded-full font-semibold text-[10px] ${
                       order.status === "DELIVERED"
-                        ? "bg-emerald-100 text-emerald-800"
-                        : "bg-rose-100 text-rose-800"
+                        ? "bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300"
+                        : "bg-rose-100 dark:bg-rose-950/60 text-rose-800 dark:text-rose-300"
                     }`}
                   >
                     {order.status}
                   </span>
                   <Link
                     href={`/track/${order.trackingNumber}`}
-                    className="p-1 text-slate-400 hover:text-indigo-600"
+                    className="p-1 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400"
                   >
                     <ExternalLink className="w-3.5 h-3.5" />
                   </Link>
@@ -427,57 +433,57 @@ export default function AgentDashboard() {
       {/* Failure Reason Modal */}
       {failureModalOrder && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-200 dark:border-slate-800 transition-colors">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-xl bg-rose-100 text-rose-700 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-2xl bg-rose-100 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 flex items-center justify-center">
                 <AlertTriangle className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="font-bold text-slate-900 text-base">Record Delivery Failure</h3>
-                <p className="text-xs text-slate-500 font-mono">Order #{failureModalOrder.trackingNumber}</p>
+                <h3 className="font-bold text-slate-900 dark:text-white text-base">Record Delivery Failure</h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400 font-mono">Order #{failureModalOrder.trackingNumber}</p>
               </div>
             </div>
 
             <form onSubmit={submitFailure} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Select Failure Reason</label>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Select Failure Reason</label>
                 <select
                   value={failureReason}
                   onChange={(e) => setFailureReason(e.target.value)}
-                  className="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl focus:ring-2 focus:ring-rose-500 focus:outline-none"
+                  className="w-full px-3 py-2 text-xs border border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-white rounded-xl focus:ring-2 focus:ring-rose-500 focus:outline-none"
                 >
                   <option value="Customer Unavailable (Door locked, phone unanswered)">Customer Unavailable (Door locked, phone unanswered)</option>
                   <option value="Incorrect Address / Unlocatable Landmark">Incorrect Address / Unlocatable Landmark</option>
-                  <option value="Customer Refused Order / Cancelled on Doorstep">Customer Refused Order / Cancelled on Doorstep</option>
-                  <option value="Customer Requested Delivery at a Later Date">Customer Requested Delivery at a Later Date</option>
-                  <option value="Severe Weather / Vehicle Breakdown / Road Blockage">Severe Weather / Vehicle Breakdown / Road Blockage</option>
+                  <option value="Customer Refused Delivery / COD Payment Issue">Customer Refused Delivery / COD Payment Issue</option>
+                  <option value="Package Damaged in Transit">Package Damaged in Transit</option>
+                  <option value="Severe Weather / Route Inaccessible">Severe Weather / Route Inaccessible</option>
                 </select>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Additional Agent Notes</label>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Additional Notes</label>
                 <textarea
-                  rows={3}
+                  rows={2}
                   value={failureNotes}
                   onChange={(e) => setFailureNotes(e.target.value)}
-                  placeholder="e.g. Rang bell 3 times, dialed recipient twice with no answer..."
-                  className="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl focus:ring-2 focus:ring-rose-500 focus:outline-none"
+                  placeholder="e.g. Called customer 3 times, guard said flat is locked..."
+                  className="w-full px-3 py-2 text-xs border border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-white rounded-xl focus:ring-2 focus:ring-rose-500 focus:outline-none"
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+              <div className="flex items-center justify-end gap-2 pt-2">
                 <button
                   type="button"
                   onClick={() => setFailureModalOrder(null)}
-                  className="px-4 py-2 text-xs font-semibold text-slate-600 hover:text-slate-900 bg-slate-100 rounded-lg"
+                  className="px-4 py-2 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 text-xs font-semibold text-white bg-rose-600 hover:bg-rose-700 rounded-lg shadow"
+                  className="px-4 py-2 text-xs font-bold bg-rose-600 hover:bg-rose-500 text-white rounded-xl shadow"
                 >
-                  Confirm Failure & Notify Customer
+                  Confirm Failure
                 </button>
               </div>
             </form>

@@ -103,25 +103,25 @@ export default function LandingPage() {
       {/* Role Navigation Cards */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-8">
-          <h2 className="text-xs font-bold uppercase tracking-widest text-indigo-600 mb-2">Role Portals</h2>
-          <p className="text-2xl font-bold text-slate-900">Explore Dedicated Workspaces</p>
+          <h2 className="text-xs font-bold uppercase tracking-widest text-indigo-600 dark:text-indigo-400 mb-2">Role Portals</h2>
+          <p className="text-2xl font-bold text-slate-900 dark:text-white">Explore Dedicated Workspaces</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Customer Portal */}
-          <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between group">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition flex flex-col justify-between group">
             <div>
-              <div className="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center mb-4 group-hover:scale-105 transition transform">
+              <div className="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center mb-4 group-hover:scale-105 transition transform">
                 <Package className="w-6 h-6" />
               </div>
-              <h3 className="font-bold text-slate-900 text-lg mb-2">Customer Portal</h3>
-              <p className="text-xs text-slate-600 leading-relaxed mb-4">
+              <h3 className="font-bold text-slate-900 dark:text-white text-lg mb-2">Customer Portal</h3>
+              <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed mb-4">
                 Calculate live quotes, book B2B/B2C shipments, view step-by-step tracking timelines, and reschedule failed deliveries seamlessly.
               </p>
             </div>
             <Link
               href="/customer"
-              className="inline-flex items-center gap-2 text-xs font-semibold text-blue-600 hover:text-blue-700 pt-3 border-t border-slate-100"
+              className="inline-flex items-center gap-2 text-xs font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 pt-3 border-t border-slate-100 dark:border-slate-800"
             >
               <span>Enter Customer Workspace</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -129,19 +129,19 @@ export default function LandingPage() {
           </div>
 
           {/* Delivery Agent Portal */}
-          <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between group">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition flex flex-col justify-between group">
             <div>
-              <div className="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center mb-4 group-hover:scale-105 transition transform">
+              <div className="w-12 h-12 rounded-2xl bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center mb-4 group-hover:scale-105 transition transform">
                 <Truck className="w-6 h-6" />
               </div>
-              <h3 className="font-bold text-slate-900 text-lg mb-2">Delivery Agent Mobile App</h3>
-              <p className="text-xs text-slate-600 leading-relaxed mb-4">
+              <h3 className="font-bold text-slate-900 dark:text-white text-lg mb-2">Delivery Agent Mobile App</h3>
+              <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed mb-4">
                 Mobile-first driver workdeck with availability toggle, simulated GPS telemetry, pickup/delivery status updates, and failed attempt reason logging.
               </p>
             </div>
             <Link
               href="/agent"
-              className="inline-flex items-center gap-2 text-xs font-semibold text-amber-600 hover:text-amber-700 pt-3 border-t border-slate-100"
+              className="inline-flex items-center gap-2 text-xs font-semibold text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 pt-3 border-t border-slate-100 dark:border-slate-800"
             >
               <span>Launch Driver Workdeck</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -149,19 +149,19 @@ export default function LandingPage() {
           </div>
 
           {/* Admin Console */}
-          <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between group">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition flex flex-col justify-between group">
             <div>
-              <div className="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-4 group-hover:scale-105 transition transform">
+              <div className="w-12 h-12 rounded-2xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mb-4 group-hover:scale-105 transition transform">
                 <ShieldCheck className="w-6 h-6" />
               </div>
-              <h3 className="font-bold text-slate-900 text-lg mb-2">Admin Operations Console</h3>
-              <p className="text-xs text-slate-600 leading-relaxed mb-4">
+              <h3 className="font-bold text-slate-900 dark:text-white text-lg mb-2">Admin Operations Console</h3>
+              <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed mb-4">
                 Master dashboard for order management, intelligent 1-click auto-assignment, dynamic rate card configuration, zone/pincode matrices, and status overrides.
               </p>
             </div>
             <Link
               href="/admin/orders"
-              className="inline-flex items-center gap-2 text-xs font-semibold text-indigo-600 hover:text-indigo-700 pt-3 border-t border-slate-100"
+              className="inline-flex items-center gap-2 text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 pt-3 border-t border-slate-100 dark:border-slate-800"
             >
               <span>Open Operations Deck</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -173,9 +173,9 @@ export default function LandingPage() {
       {/* Interactive Rate Calculator Showcase */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-8">
-          <h2 className="text-xs font-bold uppercase tracking-widest text-indigo-600 mb-2">Real-time Quotation</h2>
-          <p className="text-2xl font-bold text-slate-900">Test The Dynamic Rate Calculation Engine</p>
-          <p className="text-xs text-slate-500 max-w-xl mx-auto mt-1">
+          <h2 className="text-xs font-bold uppercase tracking-widest text-indigo-600 dark:text-indigo-400 mb-2">Real-time Quotation</h2>
+          <p className="text-2xl font-bold text-slate-900 dark:text-white">Test The Dynamic Rate Calculation Engine</p>
+          <p className="text-xs text-slate-500 dark:text-slate-400 max-w-xl mx-auto mt-1">
             See how volumetric dimensions, zone scopes, and COD surcharges are calculated automatically with no hardcoded rates.
           </p>
         </div>
@@ -197,7 +197,7 @@ export default function LandingPage() {
                 01
               </div>
               <h3 className="font-bold text-white text-base">Volumetric Weight Engine</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
+              <p className="text-xs text-slate-300 leading-relaxed">
                 Applies standard (L×B×H)/5000 volumetric logic and bills on max(actual, volumetric). Protects revenue on bulky, low-density cargo.
               </p>
             </div>
@@ -207,7 +207,7 @@ export default function LandingPage() {
                 02
               </div>
               <h3 className="font-bold text-white text-base">Dynamic Rate Cards</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
+              <p className="text-xs text-slate-300 leading-relaxed">
                 Zero hardcoding. Admins configure Intra/Inter zone base rates, incremental per-kg rates, and COD surcharges separately for B2B vs B2C.
               </p>
             </div>
@@ -217,7 +217,7 @@ export default function LandingPage() {
                 03
               </div>
               <h3 className="font-bold text-white text-base">Nearest Agent Auto-Assign</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
+              <p className="text-xs text-slate-300 leading-relaxed">
                 Calculates Haversine distance, prioritizes operating zones, filters active capacities, and balances delivery loads across available fleet.
               </p>
             </div>
@@ -227,7 +227,7 @@ export default function LandingPage() {
                 04
               </div>
               <h3 className="font-bold text-white text-base">Immutable Event Log</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
+              <p className="text-xs text-slate-300 leading-relaxed">
                 Event-sourced status transitions recorded with non-destructive timestamps, actor IDs, roles, geo-coordinates, and override notes.
               </p>
             </div>
@@ -237,7 +237,7 @@ export default function LandingPage() {
                 05
               </div>
               <h3 className="font-bold text-white text-base">Failure Recovery & Reschedule</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
+              <p className="text-xs text-slate-300 leading-relaxed">
                 Flags delivery failure with mandatory reason codes, frees driver capacity, alerts customer via email/SMS, and automatically reassigns on reschedule.
               </p>
             </div>
@@ -247,7 +247,7 @@ export default function LandingPage() {
                 06
               </div>
               <h3 className="font-bold text-white text-base">Multi-Channel Notifications</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
+              <p className="text-xs text-slate-300 leading-relaxed">
                 Configurable SMTP and SMS alert engine with in-app simulation logs and customer email delivery notices.
               </p>
             </div>

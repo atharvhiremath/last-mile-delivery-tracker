@@ -8,17 +8,18 @@ import {
   ShieldCheck,
   Search,
   Filter,
-  Truck,
-  Plus,
   Zap,
-  ExternalLink,
-  ShieldAlert,
+  Truck,
   RotateCcw,
   CheckCircle2,
   AlertTriangle,
-  Clock,
-  Layers,
+  ExternalLink,
+  ChevronDown,
+  User,
   MapPin,
+  Clock,
+  Plus,
+  ShieldAlert,
 } from "lucide-react";
 import StatusOverrideModal from "@/components/StatusOverrideModal";
 
@@ -32,26 +33,23 @@ export default function AdminOrdersPage() {
   const [loading, setLoading] = useState(true);
 
   // Filters
+  const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [zoneFilter, setZoneFilter] = useState("ALL");
-  const [agentFilter, setAgentFilter] = useState("ALL");
   const [orderTypeFilter, setOrderTypeFilter] = useState("ALL");
-  const [search, setSearch] = useState("");
 
-  // Action states
-  const [autoAssigningId, setAutoAssigningId] = useState<string | null>(null);
-  const [manualAssigningId, setManualAssigningId] = useState<string | null>(null);
+  // Admin Override Modal
   const [overrideModalOrder, setOverrideModalOrder] = useState<any | null>(null);
+  const [autoAssigningId, setAutoAssigningId] = useState<string | null>(null);
   const [actionSuccessMsg, setActionSuccessMsg] = useState<string | null>(null);
 
   const fetchData = async () => {
     setLoading(true);
     try {
-      // Build query
+      // Build query string
       const params = new URLSearchParams();
       if (statusFilter !== "ALL") params.append("status", statusFilter);
       if (zoneFilter !== "ALL") params.append("zoneId", zoneFilter);
-      if (agentFilter !== "ALL") params.append("agentId", agentFilter);
       if (orderTypeFilter !== "ALL") params.append("orderType", orderTypeFilter);
       if (search.trim()) params.append("search", search.trim());
 
@@ -74,7 +72,7 @@ export default function AdminOrdersPage() {
         setZones(zData.zones || []);
       }
     } catch (e) {
-      console.error(e);
+      console.error("Admin fetch error:", e);
     } finally {
       setLoading(false);
     }
@@ -85,12 +83,12 @@ export default function AdminOrdersPage() {
       router.push("/login");
     } else if (user) {
       if (user.role !== "ADMIN") {
-        router.push("/customer");
+        router.push(user.role === "AGENT" ? "/agent" : "/customer");
       } else {
         fetchData();
       }
     }
-  }, [user, authLoading, statusFilter, zoneFilter, agentFilter, orderTypeFilter]);
+  }, [user, authLoading, statusFilter, zoneFilter, orderTypeFilter]);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -115,8 +113,8 @@ export default function AdminOrdersPage() {
       } else {
         alert(data.error || "Auto-assignment failed.");
       }
-    } catch (e) {
-      console.error(e);
+    } catch (e: any) {
+      alert(e.message || "Auto-assignment failed.");
     } finally {
       setAutoAssigningId(null);
     }
@@ -124,58 +122,55 @@ export default function AdminOrdersPage() {
 
   // Manual Agent Assignment
   const triggerManualAssign = async (orderId: string, agentId: string) => {
-    if (!agentId) return;
-    setManualAssigningId(orderId);
     setActionSuccessMsg(null);
     try {
       const res = await fetch(`/api/orders/${orderId}/assign`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ agentId }),
+        body: JSON.stringify({ auto: false, agentId }),
       });
 
       const data = await res.json();
       if (res.ok) {
-        setActionSuccessMsg(`Agent assigned successfully.`);
+        setActionSuccessMsg("Manual assignment updated successfully.");
         await fetchData();
       } else {
         alert(data.error || "Manual assignment failed.");
       }
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setManualAssigningId(null);
+    } catch (e: any) {
+      alert(e.message || "Manual assignment failed.");
     }
   };
 
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "DELIVERED":
-        return <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">Delivered</span>;
+        return <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800">DELIVERED</span>;
       case "FAILED":
-        return <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-rose-100 text-rose-800 border border-rose-300 animate-pulse">Failed</span>;
+        return <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-rose-100 dark:bg-rose-950/60 text-rose-800 dark:text-rose-300 border border-rose-300 dark:border-rose-800 animate-pulse">FAILED</span>;
       case "OUT_FOR_DELIVERY":
-        return <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-100 text-amber-800 border border-amber-300">Out for Delivery</span>;
+        return <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-800">OUT FOR DELIVERY</span>;
       case "RESCHEDULED":
-        return <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-purple-100 text-purple-800 border border-purple-300">Rescheduled</span>;
+        return <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-purple-100 dark:bg-purple-950/60 text-purple-800 dark:text-purple-300 border border-purple-300 dark:border-purple-800">RESCHEDULED</span>;
       case "PLACED":
-        return <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-blue-100 text-blue-800 border border-blue-300">Placed (Unassigned)</span>;
+        return <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 dark:bg-blue-950/60 text-blue-800 dark:text-blue-300 border border-blue-300 dark:border-blue-800">PLACED</span>;
       default:
-        return <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-indigo-100 text-indigo-800 border border-indigo-300">{status.replace(/_/g, " ")}</span>;
+        return <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-indigo-100 dark:bg-indigo-950/60 text-indigo-800 dark:text-indigo-300 border border-indigo-300 dark:border-indigo-800">{status.replace(/_/g, " ")}</span>;
     }
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
-      {/* Header */}
-      <div className="flex flex-wrap items-center justify-between gap-4 bg-slate-900 text-white p-6 sm:p-8 rounded-3xl border border-slate-800 shadow-xl">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+      {/* Top Banner */}
+      <div className="flex flex-wrap items-center justify-between gap-4 bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm transition-colors">
         <div>
-          <div className="text-xs font-bold uppercase tracking-wider text-indigo-400 mb-1 flex items-center gap-1.5">
-            <ShieldCheck className="w-4 h-4 text-indigo-400" />
-            Admin Operations Deck
+          <div className="text-xs font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400 mb-1 flex items-center gap-1.5">
+            <ShieldCheck className="w-4 h-4" /> Admin Operations Control Deck
           </div>
-          <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">Order Lifecycle & Dispatch Console</h1>
-          <p className="text-xs text-slate-400 mt-1">
+          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
+            Order Lifecycle & Dispatch Manager
+          </h1>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
             Intelligent auto-assignment • Multi-criteria filters • Status overrides with immutable audit logs
           </p>
         </div>
@@ -183,7 +178,7 @@ export default function AdminOrdersPage() {
         <div className="flex items-center gap-3">
           <Link
             href="/customer/create-order"
-            className="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shadow-lg transition flex items-center gap-1.5"
+            className="px-4 py-2.5 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shadow-lg transition flex items-center gap-1.5"
           >
             <Plus className="w-4 h-4" />
             <span>+ Create Order for Customer</span>
@@ -192,21 +187,21 @@ export default function AdminOrdersPage() {
       </div>
 
       {actionSuccessMsg && (
-        <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-center justify-between">
+        <div className="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-200 text-xs flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
             <span className="font-semibold">{actionSuccessMsg}</span>
           </div>
-          <button onClick={() => setActionSuccessMsg(null)} className="text-xs text-emerald-600 font-bold">Dismiss</button>
+          <button onClick={() => setActionSuccessMsg(null)} className="text-xs text-emerald-600 dark:text-emerald-400 font-bold">Dismiss</button>
         </div>
       )}
 
       {/* Multi-Filter Bar */}
-      <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+      <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4 transition-colors">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
           {/* Search */}
           <div className="lg:col-span-2">
-            <label className="block text-[11px] font-semibold text-slate-500 mb-1">Search Orders</label>
+            <label className="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 mb-1">Search Orders</label>
             <form onSubmit={handleSearchSubmit} className="relative">
               <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
               <input
@@ -214,18 +209,18 @@ export default function AdminOrdersPage() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Tracking #, customer, sender, city..."
-                className="w-full pl-9 pr-3 py-2 text-xs border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                className="w-full pl-9 pr-3 py-2 text-xs border border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-white rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none"
               />
             </form>
           </div>
 
           {/* Status Filter */}
           <div>
-            <label className="block text-[11px] font-semibold text-slate-500 mb-1">Order Status</label>
+            <label className="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 mb-1">Order Status</label>
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              className="w-full px-3 py-2 text-xs border border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-white rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none"
             >
               <option value="ALL">All Statuses</option>
               <option value="PLACED">PLACED (Pending Assignment)</option>
@@ -241,11 +236,11 @@ export default function AdminOrdersPage() {
 
           {/* Zone Filter */}
           <div>
-            <label className="block text-[11px] font-semibold text-slate-500 mb-1">Zone Scope</label>
+            <label className="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 mb-1">Zone Scope</label>
             <select
               value={zoneFilter}
               onChange={(e) => setZoneFilter(e.target.value)}
-              className="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              className="w-full px-3 py-2 text-xs border border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-white rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none"
             >
               <option value="ALL">All Zones</option>
               {zones.map((z) => (
@@ -256,11 +251,11 @@ export default function AdminOrdersPage() {
 
           {/* Order Type Filter */}
           <div>
-            <label className="block text-[11px] font-semibold text-slate-500 mb-1">Order Type</label>
+            <label className="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 mb-1">Order Type</label>
             <select
               value={orderTypeFilter}
               onChange={(e) => setOrderTypeFilter(e.target.value)}
-              className="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              className="w-full px-3 py-2 text-xs border border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-white rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none"
             >
               <option value="ALL">All Types (B2B & B2C)</option>
               <option value="B2C">B2C Retail</option>
@@ -271,27 +266,27 @@ export default function AdminOrdersPage() {
       </div>
 
       {/* Orders Master Table */}
-      <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
-        <div className="p-4 sm:p-6 border-b border-slate-100 flex items-center justify-between">
-          <div className="font-bold text-slate-900 text-sm flex items-center gap-2">
+      <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden transition-colors">
+        <div className="p-4 sm:p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+          <div className="font-bold text-slate-900 dark:text-white text-sm flex items-center gap-2">
             <span>Orders Directory</span>
-            <span className="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 text-xs font-semibold font-mono">
+            <span className="px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-xs font-semibold font-mono">
               {orders.length} total
             </span>
           </div>
-          <button onClick={fetchData} className="text-xs font-semibold text-indigo-600 hover:text-indigo-700">
+          <button onClick={fetchData} className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300">
             ↻ Refresh Table
           </button>
         </div>
 
         {loading ? (
-          <div className="py-16 text-center text-xs text-slate-500">Loading order records...</div>
+          <div className="py-16 text-center text-xs text-slate-500 dark:text-slate-400">Loading order records...</div>
         ) : orders.length === 0 ? (
-          <div className="py-16 text-center text-xs text-slate-500">No matching orders found.</div>
+          <div className="py-16 text-center text-xs text-slate-500 dark:text-slate-400">No matching orders found.</div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="bg-slate-50 text-slate-500 uppercase tracking-wider font-semibold border-b border-slate-200">
+              <thead className="bg-slate-50 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400 uppercase tracking-wider font-semibold border-b border-slate-200 dark:border-slate-800">
                 <tr>
                   <th className="py-3.5 px-4">Tracking #</th>
                   <th className="py-3.5 px-4">Status</th>
@@ -302,20 +297,20 @@ export default function AdminOrdersPage() {
                   <th className="py-3.5 px-4 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                 {orders.map((order) => {
                   const isUnassigned = !order.assignedAgentId || order.status === "PLACED";
                   const isAutoAssigning = autoAssigningId === order.id;
 
                   return (
-                    <tr key={order.id} className="hover:bg-slate-50/80 transition">
+                    <tr key={order.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition">
                       {/* Tracking # */}
-                      <td className="py-4 px-4 font-mono font-bold text-slate-900">
-                        <Link href={`/track/${order.trackingNumber}`} className="hover:text-indigo-600 flex items-center gap-1">
+                      <td className="py-4 px-4 font-mono font-bold text-slate-900 dark:text-white">
+                        <Link href={`/track/${order.trackingNumber}`} className="hover:text-indigo-600 dark:hover:text-indigo-400 flex items-center gap-1">
                           <span>#{order.trackingNumber}</span>
                           <ExternalLink className="w-3 h-3 text-slate-400" />
                         </Link>
-                        <div className="text-[10px] text-slate-400 font-sans font-normal mt-0.5">
+                        <div className="text-[10px] text-slate-400 dark:text-slate-500 font-sans font-normal mt-0.5">
                           {new Date(order.createdAt).toLocaleDateString()}
                         </div>
                       </td>
@@ -324,7 +319,7 @@ export default function AdminOrdersPage() {
                       <td className="py-4 px-4">
                         {getStatusBadge(order.status)}
                         {order.failedReason && (
-                          <div className="text-[10px] text-rose-600 truncate max-w-[140px] mt-1" title={order.failedReason}>
+                          <div className="text-[10px] text-rose-600 dark:text-rose-400 truncate max-w-[140px] mt-1" title={order.failedReason}>
                             ⚠️ {order.failedReason}
                           </div>
                         )}
@@ -332,26 +327,26 @@ export default function AdminOrdersPage() {
 
                       {/* Customer */}
                       <td className="py-4 px-4">
-                        <div className="font-semibold text-slate-900">{order.customer?.name}</div>
-                        <div className="text-[11px] text-slate-500">{order.recipientPhone}</div>
+                        <div className="font-semibold text-slate-900 dark:text-white">{order.customer?.name}</div>
+                        <div className="text-[11px] text-slate-500 dark:text-slate-400">{order.recipientPhone}</div>
                       </td>
 
                       {/* Route & Zones */}
                       <td className="py-4 px-4">
-                        <div className="flex items-center gap-1 text-slate-700">
+                        <div className="flex items-center gap-1 text-slate-700 dark:text-slate-300">
                           <span className="font-medium">{order.pickupCity}</span>
                           <span className="text-slate-400">→</span>
                           <span className="font-medium">{order.dropCity}</span>
                         </div>
-                        <div className="text-[10px] text-slate-400 mt-0.5">
+                        <div className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5">
                           {order.pickupZone?.name || "Zone"} → {order.dropZone?.name || "Zone"}
                         </div>
                       </td>
 
                       {/* Weight & Total */}
                       <td className="py-4 px-4">
-                        <div className="font-bold text-slate-900">${order.totalAmount.toFixed(2)}</div>
-                        <div className="text-[10px] text-slate-500">
+                        <div className="font-bold text-slate-900 dark:text-white">${order.totalAmount.toFixed(2)}</div>
+                        <div className="text-[10px] text-slate-500 dark:text-slate-400">
                           {order.billableWeightKg} kg billed • {order.paymentType}
                         </div>
                       </td>
@@ -360,16 +355,16 @@ export default function AdminOrdersPage() {
                       <td className="py-4 px-4">
                         {order.assignedAgent ? (
                           <div className="space-y-1">
-                            <div className="font-semibold text-slate-900 flex items-center gap-1">
-                              <Truck className="w-3.5 h-3.5 text-indigo-600" />
+                            <div className="font-semibold text-slate-900 dark:text-white flex items-center gap-1">
+                              <Truck className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
                               <span>{order.assignedAgent.user?.name}</span>
                             </div>
-                            <div className="text-[10px] text-slate-500 font-mono">
+                            <div className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">
                               {order.assignedAgent.vehicleType} ({order.assignedAgent.vehicleNumber})
                             </div>
                           </div>
                         ) : (
-                          <span className="text-xs text-amber-700 font-medium bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
+                          <span className="text-xs text-amber-700 dark:text-amber-300 font-medium bg-amber-50 dark:bg-amber-950/60 px-2 py-0.5 rounded border border-amber-200 dark:border-amber-800">
                             Unassigned
                           </span>
                         )}
@@ -399,7 +394,7 @@ export default function AdminOrdersPage() {
                               }
                             }}
                             defaultValue=""
-                            className="px-2 py-1 text-[11px] border border-slate-300 rounded-lg bg-white text-slate-700 focus:outline-none"
+                            className="px-2 py-1 text-[11px] border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 focus:outline-none"
                           >
                             <option value="" disabled>Manual Assign...</option>
                             {agents.map((ag) => (
@@ -414,7 +409,7 @@ export default function AdminOrdersPage() {
                             type="button"
                             onClick={() => setOverrideModalOrder(order)}
                             title="Admin Status Override"
-                            className="p-1.5 rounded-lg bg-slate-100 hover:bg-amber-100 text-slate-500 hover:text-amber-800 transition border border-slate-200"
+                            className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-amber-100 dark:hover:bg-amber-950/60 text-slate-500 dark:text-slate-400 hover:text-amber-800 dark:hover:text-amber-300 transition border border-slate-200 dark:border-slate-700"
                           >
                             <ShieldAlert className="w-3.5 h-3.5" />
                           </button>
