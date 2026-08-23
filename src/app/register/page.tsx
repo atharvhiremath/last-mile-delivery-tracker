@@ -7,16 +7,16 @@ import { useAuth } from "@/context/AuthContext";
 import { UserPlus, AlertCircle, Truck, Package, Shield, Eye, EyeOff } from "lucide-react";
 
 const COUNTRY_CODES = [
-  { code: "+91", label: "🇮🇳 +91 (IN)" },
-  { code: "+1", label: "🇺🇸 +1 (US/CA)" },
-  { code: "+44", label: "🇬🇧 +44 (UK)" },
-  { code: "+61", label: "🇦🇺 +61 (AU)" },
-  { code: "+971", label: "🇦🇪 +971 (UAE)" },
-  { code: "+65", label: "🇸🇬 +65 (SG)" },
-  { code: "+49", label: "🇩🇪 +49 (DE)" },
-  { code: "+33", label: "🇫🇷 +33 (FR)" },
-  { code: "+81", label: "🇯🇵 +81 (JP)" },
-  { code: "+86", label: "🇨🇳 +86 (CN)" },
+  { code: "+91", label: "🇮🇳 +91" },
+  { code: "+1", label: "🇺🇸 +1" },
+  { code: "+44", label: "🇬🇧 +44" },
+  { code: "+61", label: "🇦🇺 +61" },
+  { code: "+971", label: "🇦🇪 +971" },
+  { code: "+65", label: "🇸🇬 +65" },
+  { code: "+49", label: "🇩🇪 +49" },
+  { code: "+33", label: "🇫🇷 +33" },
+  { code: "+81", label: "🇯🇵 +81" },
+  { code: "+86", label: "🇨🇳 +86" },
 ];
 
 export default function RegisterPage() {
@@ -172,14 +172,14 @@ export default function RegisterPage() {
               />
             </div>
 
-            {/* Country Code & Phone Number Field */}
+            {/* Seamless Integrated Country Code & Phone Input */}
             <div>
               <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Phone Number</label>
-              <div className="flex gap-2">
+              <div className="flex rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 focus-within:ring-2 focus-within:ring-indigo-500 overflow-hidden">
                 <select
                   value={countryCode}
                   onChange={(e) => setCountryCode(e.target.value)}
-                  className="w-32 px-2 py-2.5 text-xs border border-slate-300 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-800 dark:text-white font-semibold focus:ring-2 focus:ring-indigo-500 focus:outline-none flex-shrink-0"
+                  className="px-2.5 py-2.5 text-xs bg-slate-50 dark:bg-slate-800/90 text-slate-800 dark:text-white font-semibold border-r border-slate-200 dark:border-slate-700 focus:outline-none cursor-pointer flex-shrink-0"
                 >
                   {COUNTRY_CODES.map((c) => (
                     <option key={c.code} value={c.code}>
@@ -193,7 +193,7 @@ export default function RegisterPage() {
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   placeholder="98110 00000"
-                  className="w-full px-3.5 py-2.5 text-xs border border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-white rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none font-mono"
+                  className="w-full min-w-0 px-3 py-2.5 text-xs bg-transparent dark:text-white focus:outline-none font-mono"
                 />
               </div>
             </div>

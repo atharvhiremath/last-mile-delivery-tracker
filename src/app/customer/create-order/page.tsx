@@ -19,16 +19,16 @@ import {
 } from "lucide-react";
 
 const COUNTRY_CODES = [
-  { code: "+91", label: "🇮🇳 +91 (IN)" },
-  { code: "+1", label: "🇺🇸 +1 (US/CA)" },
-  { code: "+44", label: "🇬🇧 +44 (UK)" },
-  { code: "+61", label: "🇦🇺 +61 (AU)" },
-  { code: "+971", label: "🇦🇪 +971 (UAE)" },
-  { code: "+65", label: "🇸🇬 +65 (SG)" },
-  { code: "+49", label: "🇩🇪 +49 (DE)" },
-  { code: "+33", label: "🇫🇷 +33 (FR)" },
-  { code: "+81", label: "🇯🇵 +81 (JP)" },
-  { code: "+86", label: "🇨🇳 +86 (CN)" },
+  { code: "+91", label: "🇮🇳 +91" },
+  { code: "+1", label: "🇺🇸 +1" },
+  { code: "+44", label: "🇬🇧 +44" },
+  { code: "+61", label: "🇦🇺 +61" },
+  { code: "+971", label: "🇦🇪 +971" },
+  { code: "+65", label: "🇸🇬 +65" },
+  { code: "+49", label: "🇩🇪 +49" },
+  { code: "+33", label: "🇫🇷 +33" },
+  { code: "+81", label: "🇯🇵 +81" },
+  { code: "+86", label: "🇨🇳 +86" },
 ];
 
 export default function CreateOrderPage() {
@@ -280,11 +280,11 @@ export default function CreateOrderPage() {
                 </div>
                 <div>
                   <label className="block text-[11px] text-slate-500 dark:text-slate-400 mb-1">Sender Phone</label>
-                  <div className="flex gap-2">
+                  <div className="flex rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 focus-within:ring-2 focus-within:ring-indigo-500 overflow-hidden">
                     <select
                       value={senderCountryCode}
                       onChange={(e) => setSenderCountryCode(e.target.value)}
-                      className="w-28 px-2 py-2 text-xs border border-slate-300 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-800 dark:text-white font-semibold focus:ring-2 focus:ring-indigo-500 focus:outline-none flex-shrink-0"
+                      className="px-2 py-2 text-xs bg-slate-50 dark:bg-slate-800/90 text-slate-800 dark:text-white font-semibold border-r border-slate-200 dark:border-slate-700 focus:outline-none cursor-pointer flex-shrink-0"
                     >
                       {COUNTRY_CODES.map((c) => (
                         <option key={c.code} value={c.code}>
@@ -297,7 +297,7 @@ export default function CreateOrderPage() {
                       required
                       value={senderPhone}
                       onChange={(e) => setSenderPhone(e.target.value)}
-                      className="w-full px-3 py-2 text-xs border border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-white rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none font-mono"
+                      className="w-full min-w-0 px-3 py-2 text-xs bg-transparent dark:text-white focus:outline-none font-mono"
                     />
                   </div>
                 </div>
@@ -355,11 +355,11 @@ export default function CreateOrderPage() {
                 </div>
                 <div>
                   <label className="block text-[11px] text-slate-500 dark:text-slate-400 mb-1">Recipient Phone</label>
-                  <div className="flex gap-2">
+                  <div className="flex rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 focus-within:ring-2 focus-within:ring-indigo-500 overflow-hidden">
                     <select
                       value={recipientCountryCode}
                       onChange={(e) => setRecipientCountryCode(e.target.value)}
-                      className="w-28 px-2 py-2 text-xs border border-slate-300 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-800 dark:text-white font-semibold focus:ring-2 focus:ring-indigo-500 focus:outline-none flex-shrink-0"
+                      className="px-2 py-2 text-xs bg-slate-50 dark:bg-slate-800/90 text-slate-800 dark:text-white font-semibold border-r border-slate-200 dark:border-slate-700 focus:outline-none cursor-pointer flex-shrink-0"
                     >
                       {COUNTRY_CODES.map((c) => (
                         <option key={c.code} value={c.code}>
@@ -372,7 +372,7 @@ export default function CreateOrderPage() {
                       required
                       value={recipientPhone}
                       onChange={(e) => setRecipientPhone(e.target.value)}
-                      className="w-full px-3 py-2 text-xs border border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-white rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none font-mono"
+                      className="w-full min-w-0 px-3 py-2 text-xs bg-transparent dark:text-white focus:outline-none font-mono"
                     />
                   </div>
                 </div>
