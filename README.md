@@ -36,11 +36,23 @@ For quick evaluation, click the **1-Click Quick-Fill** buttons on the login page
 
 - **Framework**: Next.js 14 (App Router, TypeScript, React 18)
 - **Styling**: Tailwind CSS, Lucide Icons
-- **Database & ORM**: Prisma ORM with SQLite & PostgreSQL support
-- **Authentication**: JWT session tokens with role-based access control (`CUSTOMER`, `AGENT`, `ADMIN`) and `bcryptjs` password hashing
+- **Backend & Database**: Dedicated cloud PostgreSQL database via Prisma ORM
+- **Authentication**: JWT session tokens with role-based access control (`CUSTOMER`, `AGENT`, `ADMIN`) and `bcryptjs` password encryption
 - **Mapping & Geo-Telemetry**: OpenStreetMap & Leaflet telemetry integration
 - **Notifications**: Multi-channel email & SMS dispatcher with in-app simulation logs
 - **Testing**: Vitest automated test suite for billing math, zone proximity, and state transitions
+
+---
+
+## 🗄️ Backend Infrastructure & Relational Persistence
+
+The platform runs on a full-stack, distributed backend architecture engineered for reliable persistence, data consistency, and transactional integrity:
+
+- **Cloud Relational Database**: Backed by a high-availability **PostgreSQL** instance with **Prisma ORM**, ensuring strict schema constraints, foreign key referential integrity, and ACID compliance.
+- **Persistent User & Account Profiles**: All user accounts created through registration are permanently stored in the backend database. User profiles, authentication credentials, assigned roles, and driver telemetry persist seamlessly across all browser sessions, devices, and logins.
+- **Cryptographic Security**: Passwords are automatically hashed and salted using industry-standard `bcryptjs` algorithms before storage. User authentication is managed via cryptographically signed JSON Web Tokens (JWT) with fine-grained Role-Based Access Control (RBAC).
+- **Relational Data Mapping**: Directly maps relations across `Users`, `DeliveryAgents`, `Zones`, `AreaPincodes`, `RateCards`, `Orders`, and `OrderStatusHistory` for high-performance querying and zero data duplication.
+- **Append-Only Immutable Event Logs**: State changes, delivery attempts, administrative status overrides, and customer reschedule events are permanently logged in relational history tables with timestamps, actor IDs, and geographic coordinates.
 
 ---
 
