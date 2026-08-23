@@ -2,6 +2,8 @@
   "name": "last-mile-delivery-tracker",
   "version": "1.0.0",
   "description": "Production-grade Last-Mile Delivery Management Platform with dynamic rate calculation, intelligent agent auto-assignment, and real-time tracking.",
+  "homepage": "https://last-mile-delivery-tracker-iota.vercel.app",
+  "author": "Atharv",
   "private": true,
   "scripts": {
     "dev": "next dev",
