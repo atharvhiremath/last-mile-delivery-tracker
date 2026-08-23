@@ -304,5 +304,5 @@ Run `npx prisma db push` and `npm run db:seed`.
 
 ---
 
-## 📄 License
-MIT License. Enterprise Last-Mile Logistics & Dispatch Platform.
+## 📄 Author & Copyright
+Copyright © 2026 Atharv. All rights reserved.
