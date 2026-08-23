@@ -23,77 +23,15 @@ import {
 } from "lucide-react";
 
 export default function Navbar() {
-  const { user, logout, login } = useAuth();
+  const { user, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [demoSwitching, setDemoSwitching] = useState(false);
-
-  // Quick Demo Account Switcher
-  const quickSwitch = async (email: string, password: string = "password123") => {
-    setDemoSwitching(true);
-    try {
-      let pass = password;
-      if (email.startsWith("admin")) pass = "admin123";
-      if (email.startsWith("agent")) pass = "agent123";
-      if (email.startsWith("customer") || email.startsWith("b2b")) pass = "customer123";
-
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password: pass }),
-      });
-      if (res.ok) {
-        const data = await res.json();
-        login(data.token, data.user);
-      }
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setDemoSwitching(false);
-    }
-  };
 
   const isActive = (path: string) => pathname === path || pathname?.startsWith(path + "/");
 
   return (
     <header className="sticky top-0 z-50 bg-slate-900/95 dark:bg-slate-950/95 backdrop-blur text-white shadow-md border-b border-slate-800 transition-colors">
-      {/* Top Demo Bar */}
-      <div className="bg-slate-950 px-4 py-1.5 text-xs flex flex-wrap items-center justify-between border-b border-slate-800 text-slate-400">
-        <div className="flex items-center gap-2">
-          <span className="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span className="font-semibold text-slate-300">Live Logistics Platform</span>
-          <span className="hidden md:inline text-slate-500">| Auto-calculated Rates • Nearest Agent Assignment • Live Tracking</span>
-        </div>
-        <div className="flex items-center gap-3">
-          {/* Quick Demo Switcher */}
-          <div className="flex items-center gap-1.5">
-            <span className="text-slate-400 hidden sm:inline">⚡ Quick Switch:</span>
-            <button
-              onClick={() => quickSwitch("admin@deliverytracker.com")}
-              disabled={demoSwitching}
-              className="px-2 py-0.5 rounded bg-indigo-900/60 hover:bg-indigo-700 text-indigo-200 text-xs font-medium transition"
-            >
-              Admin
-            </button>
-            <button
-              onClick={() => quickSwitch("customer@gmail.com")}
-              disabled={demoSwitching}
-              className="px-2 py-0.5 rounded bg-blue-900/60 hover:bg-blue-700 text-blue-200 text-xs font-medium transition"
-            >
-              Customer
-            </button>
-            <button
-              onClick={() => quickSwitch("agent.rajesh@deliverytracker.com")}
-              disabled={demoSwitching}
-              className="px-2 py-0.5 rounded bg-amber-900/60 hover:bg-amber-700 text-amber-200 text-xs font-medium transition"
-            >
-              Agent
-            </button>
-          </div>
-        </div>
-      </div>
-
       {/* Main Navbar */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
